@@ -1,0 +1,919 @@
+% 
+<<external-code, cache=FALSE, include=FALSE>>=
+	method = "OLS_stratified"
+	## CCG
+	##geo_name="NHS Hull"#"NHS Vale of York"#
+	##geo="CCG"
+
+	## LAT
+	#geo_name = c("North Yorkshire and Humber")
+	#geo = "LAT"
+	
+	## LAD
+	geo_name = c("York")
+	geo = "LAD"
+	
+	## UTLA
+	#geo_name = c("York")
+	#geo = "UTLA"
+	
+	national_parent_dir = paste("../output/England/",sep="")
+	national_dir = paste(national_parent_dir,method,"/",sep="")
+	geo_parent_dir = paste("../output/",geo,"/",method,"/",sep="")
+	geo_dir = paste(geo_parent_dir,gsub(" ","_",geo_name),"/",sep="")
+	
+@
+\documentclass{beamer}
+\usepackage{float,rotating,beamerthemebars}
+\usepackage[svgnames]{xcolor}
+\usepackage{hyperref}
+\title{NHS Equity Indicators}
+\subtitle{England: 2001/2 - 2011/12}
+\author{Miqdad Asaria, Shehzad Ali, Richard Cookson}
+\institute{\textcolor{red}{Work in progress not for citation}}
+
+\date{}
+\usetheme{Warsaw}
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle\hspace*{3em}
+    \insertframenumber\,/\,\inserttotalframenumber \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\makeatletter
+\setbeamertemplate{headline}
+{%
+  \leavevmode%
+  \@tempdimb=2.4375ex%
+  \ifnum\beamer@subsectionmax<\beamer@sectionmax%
+    \multiply\@tempdimb by\beamer@sectionmax%
+  \else%
+    \multiply\@tempdimb by\beamer@subsectionmax%
+  \fi%
+  \ifdim\@tempdimb>0pt%
+    \advance\@tempdimb by 1.825ex%
+    \begin{beamercolorbox}[wd=.4\paperwidth,ht=\@tempdimb]{section in
+    head/foot}%
+      \vbox to\@tempdimb{\vfil\insertsectionnavigation{.25\paperwidth}\vfil}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.6\paperwidth,ht=\@tempdimb]{subsection in head/foot}%
+      \vbox to\@tempdimb{\vfil\insertsubsectionnavigation{.75\paperwidth}\vfil}%
+    \end{beamercolorbox}%
+  \fi%
+}
+\makeatother
+\setbeamerfont{frametitle}{size=\large}
+\usecolortheme{seagull}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+  \frametitle{Contents}
+  \tiny{\tableofcontents[
+  currentsection,
+  sectionstyle=show/show,
+  subsectionstyle=show/shaded/hide,
+  subsubsectionstyle=hide]}
+  \end{frame}
+}
+
+\begin{document}
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+@
+
+
+\setkeys{Gin}{height=0.85\textheight}
+
+\frame{\titlepage}
+
+\begin{frame}[containsverbatim]
+\frametitle{Disclaimer}
+\begin{center}
+\begin{itemize}
+    \item This is unpublished work-in-progress arising from the research project:
+\textit{Cookson, R, Raine, R, Laudicella, M, Goddard, M, Ferguson, B,
+Fleetcroft, R, Goldblatt, P.  Jan 2013 to Dec 2015.  Developing indicators of change in NHS equity performance. NIHR Health Services and Delivery Research (HS&DR) Programme (project number 11/2004/39).}
+    \item Please do not cite any of the findings in this document, as they have not been peer reviewed and are subject to change and revision as the project proceeds.
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\section{Background}
+
+\begin{frame}[containsverbatim]
+\frametitle{Introduction}
+This chartpack provides supporting information for our NHS Equity Dashboards. 
+It presents in-depth information on 8 indicators of socioeconomic inequality in:
+\begin{center}
+\begin{itemize}
+    \item Healthcare access (3 indicators)
+    \item Healthcare outcomes (4 indicators)
+    \item Health (1 indicator)
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Conceptual Framework}
+\begin{center}
+\includegraphics{../output/conceptual_framework.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator Definitions}
+\begin{center}
+\includegraphics{../output/definitions.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Socioeconomic inequality}
+\begin{center}
+\begin{itemize}
+  \item Socioeconomic inequality is measured using the Index of Multiple
+  Deprivation 2010 for English small areas - 32,482 lower layer super output areas (LSOAs) - which are neighbourhoods of about 1,500 people.
+  \item To provide a simple way of visualising the inequality patterns, these
+  small areas are split into five equally sized national quintile groups, labelled Q1 to Q5, where Q1 is the most deprived fifth (or "poorest", for short).
+  \item We also show "relative" and "slope" indices of inequality based on
+  regression analysis using all of the small areas, with error bars showing 95\%
+  confidence intervals.
+\end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Population matrix plot}
+\begin{center}
+\includegraphics{../output/England/population/population_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Population matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{../output/England/population/population_matrix_free.png}
+\end{center}
+\end{frame}
+
+%\begin{frame}[containsverbatim]
+%\frametitle{Top 10 \Sexpr{geo}s overall (1 = best on equity)}
+%\begin{center}
+%\input{\Sexpr{national_dir}overall_top_ten_table}
+%\end{center}
+%\end{frame}			
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Bottom 10 \Sexpr{geo}s overall (1 = worst on equity)}
+%\begin{center}
+%\input{\Sexpr{national_dir}overall_bottom_ten_table}
+%\end{center}
+%\end{frame}	
+
+\section{Healthcare Access}
+\subsection{1. Primary Care Supply}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 1. Primary Care Supply}
+Primary Care Supply
+\begin{center}
+\begin{itemize}
+    \item patients per full time equivalent GP, excluding registrars and
+    retainers
+    \item adjusted for age, sex and neighbourhood ill-health using the Carr-Hill
+    workload adjustment
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}pat_gp_fte_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}pat_gp_fte_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}pat_gp_fte_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}pat_gp_fte_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}pat_gp_fte_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}pat_gp_fte_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}pat_gp_fte_adj_bottom_ten_table}
+\end{center}
+\end{frame}			
+
+
+\subsection{2. Primary Care Quality}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 2. Primary Care Quality}
+Primary Care Quality
+\begin{center}
+  \begin{itemize}
+    \item clinical performance in the quality and outcomes framework (weighted by public health impact)
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{PHIS Definition}
+\begin{center}
+  \includegraphics{../output/PHIS_definition.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot (inverted scale)}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}PHIS_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}PHIS_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}PHIS_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}PHIS_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}PHIS_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}PHIS_bottom_ten_table}
+\end{center}
+\end{frame}	
+
+\subsection{3. Hospital Waiting Time}
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 3. Hospital Waiting Time}
+Hospital Waiting Time
+\begin{center}
+  \begin{itemize}
+    \item days from outpatient decision-to-treat to inpatient admission-for-treatment
+    \item excludes "planned appointments" where wait scheduled for medical
+    reasons
+    \item excludes waits longer than 12 months
+    \item adjusted for speciality of consultant responsible for admission
+    episode (over 100 mainspef codes)
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}waiting_time_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}waiting_time_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}waiting_time_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}waiting_time_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}waiting_time_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}waiting_time_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}waiting_time_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}waiting_time_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}waiting_time_adj_bottom_ten_table}
+\end{center}
+\end{frame}	
+
+\section{Healthcare Outcomes}
+
+\subsection{4. Preventable Hospitalisation}
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 4. Preventable Hospitalisation}
+Preventable Hospitalisation
+\begin{center}
+  \begin{itemize}
+    \item number of people per 1,000 population having one or more
+    emergency hospitalisations for an ambulatory care sensitive condition
+    \item adjusted for age and sex
+    \item preventable defined according to the NHS outcomes framework definition
+    for indicator: \href{https://indicators.ic.nhs.uk/download/Clinical
+    Commissioning Group
+    Indicators/Specification/CCG_2.6_I00757_S_V7.pdf}{\textcolor{blue}{NHS OF
+    2.3.i}}
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}unplanned_hospitalisations_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}unplanned_hospitalisations_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}unplanned_hospitalisations_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}unplanned_hospitalisations_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}unplanned_hospitalisations_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}unplanned_hospitalisations_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}unplanned_hospitalisations_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}unplanned_hospitalisations_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}unplanned_hospitalisations_adj_bottom_ten_table}
+\end{center}
+\end{frame}	
+
+%\subsection{5. Post-hospital Adverse Events}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Indicator 5. Post-hospital adverse events}
+%Post-hospital adverse events
+%\begin{center}
+%  \begin{itemize}
+%    \item proportion of inpatients with subsequent emergency readmission or death the same year
+%    \item adjusted for age and sex
+%  \end{itemize}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity scatterplot}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}adverse_event_adj_2011_scatter.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity trend chart unadjusted}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}adverse_event_panel.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity trend chart}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}adverse_event_adj_panel.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity matrix plot}
+%\begin{center}
+%\includegraphics{\Sexpr{national_parent_dir}adverse_event_matrix_fixed.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity matrix plot (free axis between age groups)}
+%\begin{center}
+%\includegraphics{\Sexpr{national_parent_dir}adverse_event_matrix_free.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}adverse_event_adj_2011_caterpillar.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+%\begin{center}
+%\input{\Sexpr{geo_parent_dir}adverse_event_adj_top_ten_table}
+%\end{center}
+%\end{frame}			
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+%\begin{center}
+%\input{\Sexpr{geo_parent_dir}adverse_event_adj_bottom_ten_table}
+%\end{center}
+%\end{frame}	
+
+\subsection{5. Repeat Hospitalisation}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 5. Repeat Hospitalisation}
+Repeat hospitalisation
+\begin{center}
+  \begin{itemize}
+    \item proportion of inpatients with subsequent emergency readmission the same year
+    \item adjusted for age and sex
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}repeat_hosp_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}repeat_hosp_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}repeat_hosp_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}repeat_hosp_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}repeat_hosp_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}repeat_hosp_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}repeat_hosp_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}repeat_hosp_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}repeat_hosp_adj_bottom_ten_table}
+\end{center}
+\end{frame}	
+
+
+\subsection{6. Dying in Hospital}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 6. Dying in Hospital}
+Dying in Hospital
+\begin{center}
+  \begin{itemize}
+    \item poportion of deaths in hospital
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}hosp_death_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}hosp_death_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}hosp_death_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}hosp_death_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}hosp_death_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}hosp_death_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}hosp_death_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}hosp_death_bottom_ten_table}
+\end{center}
+\end{frame}
+
+\subsection{7. Amenable Mortality}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 7. Amenable Mortality}
+Amenable Mortality
+\begin{center}
+\begin{itemize}
+    \item deaths per 1,000 population from causes considered amenable to
+    health care
+    \item adjusted for age and sex
+    \item amenable defined according to the NHS outcomes framework definition
+    for indicator: \href{https://indicators.ic.nhs.uk/download/Clinical
+    Commissioning Group
+    Indicators/Specification/CCG_1.1_I00767_S_V6.pdf}{\textcolor{blue}{NHS OF
+    1.1}}
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}amenable_mortality_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}amenable_mortality_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}amenable_mortality_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}amenable_mortality_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}amenable_mortality_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}amenable_mortality_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}amenable_mortality_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}amenable_mortality_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}amenable_mortality_adj_bottom_ten_table}
+\end{center}
+\end{frame}
+
+\section{Health}
+\subsection{8. Mortality}
+
+\begin{frame}[containsverbatim]
+\frametitle{Indicator 8. Mortality}
+Mortality
+\begin{center}
+\begin{itemize}
+    \item deaths per 1,000 population from all causes at all ages 
+    \item adjusted for age and sex
+  \end{itemize}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity scatterplot}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}all_mortality_adj_2011_scatter.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart unadjusted}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}all_mortality_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity trend chart}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}all_mortality_adj_panel.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}all_mortality_matrix_fixed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity matrix plot (free axis between age groups)}
+\begin{center}
+\includegraphics{\Sexpr{national_parent_dir}all_mortality_matrix_free.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity correlation plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}all_mortality_adj_2011_correlation.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+\begin{center}
+\includegraphics{\Sexpr{national_dir}all_mortality_adj_2011_caterpillar.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}all_mortality_adj_top_ten_table}
+\end{center}
+\end{frame}			
+
+\begin{frame}[containsverbatim]
+\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+\begin{center}
+\input{\Sexpr{geo_parent_dir}all_mortality_adj_bottom_ten_table}
+\end{center}
+\end{frame}
+
+%\subsection{9. Morbidity}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Indicator 9. Morbidity}
+%Morbidity
+%\begin{center}
+%\begin{itemize}
+%    \item proportion of people with one or more condition (based on quality and outcomes framework data)
+%  \end{itemize}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity scatterplot}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}morbidity_2011_scatter.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity trend chart}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}morbidity_panel.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Equity caterpillar plot at \Sexpr{geo} level}
+%\begin{center}
+%\includegraphics{\Sexpr{national_dir}morbidity_2011_caterpillar.png}
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Top 10 \Sexpr{geo}s (1 = best on equity)}
+%\begin{center}
+%\input{\Sexpr{geo_parent_dir}morbidity_top_ten_table}
+%\end{center}
+%\end{frame}			
+%
+%\begin{frame}[containsverbatim]
+%\frametitle{Bottom 10 \Sexpr{geo}s (1 = worst on equity)}
+%\begin{center}
+%\input{\Sexpr{geo_parent_dir}morbidity_bottom_ten_table}
+%\end{center}
+%\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{Appendix}
+\begin{center}
+Details of indicator definitions 
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{NHS OF definition of ambulatory care sensitive conditions}
+\begin{center}
+\includegraphics{../output/ACS_def.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{NHS OF definition of conditions amenable to healthcare (1/2)}
+\begin{center}
+\includegraphics{../output/amenable_def_1.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}[containsverbatim]
+\frametitle{NHS OF definition of conditions amenable to healthcare (2/2)}
+\begin{center}
+\includegraphics{../output/amenable_def_2.pdf}
+\end{center}
+\end{frame}
+
+\end{document}
