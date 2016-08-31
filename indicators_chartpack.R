@@ -8,6 +8,7 @@ memory.limit(22000)
 
 library(MASS)
 library(ggplot2)
+library(grid)
 library(scales)
 library(gridExtra)
 library(dplyr)
@@ -381,7 +382,8 @@ plot_matrix = function(indicator, scale="fixed"){
 	matrix_plot = 
 			arrangeGrob(matrix, 
 					sub = textGrob("Breakdown by age, sex, deprivation and year", x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	
 	return(matrix_plot) 
 }
@@ -461,7 +463,8 @@ plot_quintiles = function(indicator_results, indicator, zero_line=FALSE){
 	panel_plot = 
 			arrangeGrob(main_panel, 
 					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	return(panel_plot)
 }
 
@@ -487,7 +490,8 @@ plot_gradient = function(indicator_results, indicator){
 	gradient_plot = 
 			arrangeGrob(gradient, 
 					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 		return(gradient_plot)
 }
 
@@ -1004,7 +1008,7 @@ plot_geo_scatter2 = function(geo_name, year, indicator, reverse, geo, years=1){
 	geo_data=inner_join(lines, geo_data, by="NORMALISED_RANK")
 	
 	scatter = ggplot(data=geo_data, aes(x=(1-NORMALISED_RANK),y=lsoa_indicator, group=line)) +
-			geom_point(size=1, colour="black", aes(x=(1-NORMALISED_RANK),y=lsoa_indicator)) +
+			geom_jitter(size=1, width=0.05, height=0.05, colour="lightblue", aes(x=(1-NORMALISED_RANK),y=lsoa_indicator)) +
 			xlab("Small area deprivation rank") + 
 			ylab(indicator[["indicator_label"]]) +
 			ggtitle(paste(indicator[["title"]]," ",year,"/",substr(as.character(year+1),3,4),sep="")) + 
@@ -1023,8 +1027,9 @@ plot_geo_scatter2 = function(geo_name, year, indicator, reverse, geo, years=1){
 	}
 	scatter_plot = 
 			arrangeGrob(scatter, 
-					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+					sub = textGrob(paste0(indicator[["footnote"]]), x = 0, hjust = -0.1, vjust=0.1,
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	return(scatter_plot)
 }
 
@@ -1069,7 +1074,8 @@ plot_national_scatter2 = function(year, indicator, reverse){
 	scatter_plot = 
 			arrangeGrob(scatter, 
 					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	return(scatter_plot)
 }
 
@@ -1084,6 +1090,7 @@ plot_national_correlation = function(year, geo_data, indicator){
 	graph_data = geo_data %>% 
 			filter(YEAR==2011) %>%
 			inner_join(ccg_data,by="GEOGRAPHY") %>%
+			ungroup() %>%
 			select(NORMALISED_RANK,MEAN=OVERALL_MEAN,AGI=SII) %>%
 			gather(INDICATOR,VALUE,-NORMALISED_RANK)
 	
@@ -1100,7 +1107,8 @@ plot_national_correlation = function(year, geo_data, indicator){
 	correlation_plot = 
 			arrangeGrob(correlation, 
 					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	return(correlation_plot)
 }
 
@@ -1133,7 +1141,8 @@ plot_geo_caterpillar = function(geo_name, year, indicator_results, indicator, na
 	caterpillar_plot = 
 			arrangeGrob(caterpillar, 
 			sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-					gp = gpar(fontface = "italic", fontsize = 10)))
+					gp = gpar(fontface = "italic", fontsize = 10)),
+			heights=c(0.90,0.10))
 	
 	return(caterpillar_plot)
 }
@@ -1143,7 +1152,7 @@ plot_national_caterpillar = function(year, indicator_results, indicator, nationa
 		year = max(indicator_results$YEAR)
 	}
 	
-	indicator_results = indicator_results %>% filter(YEAR==year) %>% select(GEOGRAPHY,SII,SII_LCI,SII_UCI)
+	indicator_results = indicator_results %>% filter(YEAR==year) %>% select(GEOGRAPHY,SII,SII_LCI,SII_UCI) %>% ungroup()
 	caterpillar_data = indicator_results %>% arrange(desc(SII))
 	caterpillar_data[,"SII_RANK"] = (1:nrow(caterpillar_data))/nrow(caterpillar_data)
 	caterpillar = ggplot(caterpillar_data, aes(x=SII_RANK,y=SII)) +
@@ -1160,7 +1169,8 @@ plot_national_caterpillar = function(year, indicator_results, indicator, nationa
 	caterpillar_plot = 
 			arrangeGrob(caterpillar, 
 					sub = textGrob(indicator[["footnote"]], x = 0, hjust = -0.1, vjust=0.1,
-							gp = gpar(fontface = "italic", fontsize = 10)))
+							gp = gpar(fontface = "italic", fontsize = 10)),
+					heights=c(0.90,0.10))
 	return(caterpillar_plot)
 }
 
@@ -1397,6 +1407,7 @@ create_indicators_output = function(indicators, indicator_names, output_director
 			rank_year = max(geo_data$YEAR)
 			rank = geo_data %>%
 					filter(YEAR==rank_year) %>%
+					ungroup() %>%
 					select(GEOGRAPHY,SII,SII_significance) %>%
 					mutate(INDICATOR=indicator[["title"]],SII=round(SII,2),GEOGRAPHY=substr(GEOGRAPHY,4,44),RANK=row_number(SII),INV_RANK=row_number(-1*SII))
 		
@@ -1754,7 +1765,7 @@ lad_list = c("Adur", "Allerdale", "Amber Valley", "Arun", "Ashfield", "Ashford",
 		"West Oxfordshire", "West Somerset", "Westminster", "Weymouth and Portland", "Wigan", "Wiltshire", 
 		"Winchester", "Windsor and Maidenhead", "Wirral", "Woking", "Wokingham", "Wolverhampton", "Worcester", 
 		"Worthing", "Wychavon", "Wycombe", "Wyre", "Wyre Forest", "York")
-produce_chart_pack_figures(trim=TRUE, smooth_years=1, methods=c("OLS_stratified"), geo="CCG", geo_names=c("NHS Hull"), years=c(2011), cached=TRUE)
+produce_chart_pack_figures(trim=TRUE, smooth_years=1, methods=c("OLS_stratified"), geo="CCG", geo_names=c("NHS Central Manchester"), years=c(2011), cached=TRUE)
 #produce_chart_pack_figures(trim=TRUE, smooth_years=1, methods=c("OLS_stratified"), geo="LAD", geo_names=lad_list, years=c(2011), cached=TRUE)
 #produce_chart_pack_figures(trim=TRUE, smooth_years=1, methods=c("OLS_stratified"), geo="UTLA", geo_names=c("York"), years=c(2011), cached=TRUE)
 #final_indicator_list = c("pat_gp_fte_adj","PHIS","waiting_time_adj","unplanned_hospitalisations_adj","repeat_hosp_adj","hosp_death","amenable_mortality_adj","all_mortality_adj")
